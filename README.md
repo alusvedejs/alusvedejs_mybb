@@ -18,7 +18,7 @@ Creating a stack using the management console is pretty straightforward. Tihs st
 3. Select Upload a template to Amazon S3 option and click Choose File.
 4. Browse for mybb-cfn-template.json file that you previously downloaded from this repository.
 5. Click Next.
-6. Fill in the parameters form and make necessary changes. All fields are required. Click Next
+6. Make necessary changes to parameters. All fields are required. Click Next
 7. Click Next on Options page.
 8. On the Review page you will see checkbox with a message stating "I acknowledge that this template might cause AWS CloudFormation to create IAM resources.". You should enable this checkbox to allow the creation of IAM roles required to retrieve CloudWatch logs.
 9. Click Create.
@@ -36,8 +36,8 @@ When you are ready to go follow steps listed below. Do not forget to edit parame
 
 ```
 cd ~
-git clone https://github.com/ukbe/mybb.git
-cd mybb
+git clone https://github.com/alusvedejs/alusvedejs_mybb.git
+cd alusvedejs_mybb
 nano mybb-cfn-skeleton.json
 ./deploy-cfn-mybb.sh
 ```
