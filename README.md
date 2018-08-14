@@ -2,7 +2,7 @@
 
 ## Description
 
-This project provides a CloudFormation template which provides a "scalable" and "high available" myBB Forum application.
+This project provides a CloudFormation template which provides a "scalable" and "highly available"  and "secure" myBB Forum application.
 
 
 ## Implementation
@@ -25,6 +25,11 @@ Creating a stack using the management console is pretty straightforward. Tihs st
 
 This template takes up to 30 minutes to complete.
 
+When Stack is created Url for the new website can be found in stack outputs.
+1. Select the stack.
+2. Click on the Outputs tab.
+3. Find Value for "LoadBalancerURL" Key.
+
 #### Using AWS CLI
 
 CLI method is more simple but it requires you to install and configre AWS CLI on your client machine. Before starting steps below make sure to:
@@ -40,6 +45,11 @@ git clone https://github.com/alusvedejs/alusvedejs_mybb.git
 cd alusvedejs_mybb
 nano mybb-cfn-skeleton.json
 ./deploy-cfn-mybb.sh
+```
+When stack is finished creating Url for the new website can be retrieved:
+
+```
+aws cloudformation describe-stacks --stack-name mybb-cfn --query 'Stacks[0].Outputs[?OutputKey==`LoadBalancerURL`].OutputValue' --output text
 ```
 
 In order to access your instances you may use the ssh private key automatically created by **deploy-cfn-mybb.sh** script if you haven't changed ParKeyName parameter.
