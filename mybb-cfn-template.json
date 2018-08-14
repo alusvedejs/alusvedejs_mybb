@@ -817,18 +817,35 @@
       }
     },
 
-    "DatabaseSecurityGroup": {
-      "Type": "AWS::RDS::DBSecurityGroup",
+
+
+    "Database" : {
+      "Type": "AWS::RDS::DBInstance",
+      "DeletionPolicy": "Snapshot",
       "Properties": {
-        "GroupDescription": "RDS Database VPC Security Group",
-        "EC2VpcId": { "Ref": "VPC" },
-        "DBSecurityGroupIngress": [{
-          "EC2SecurityGroupId": {
-            "Ref": "WebServerSecurityGroup"
-          }
-        }]
+         "DBName"            : { "Ref" : "ParDBName" },
+         "Engine"            : "MySQL",
+         "MultiAZ"           : "true",
+         "MasterUsername"    : { "Ref" : "ParDBUser" },
+         "DBInstanceClass"   : { "Ref" : "ParDBInstanceClass" },
+         "DBSecurityGroups"  : [ { "Ref" : "DatabaseSecurityGroup" } ],
+         "AllocatedStorage"  : { "Ref" : "ParDBAllocatedStorage" },
+         "MasterUserPassword": { "Ref" : "ParDBPassword" }
       }
-    },
+   },
+   
+
+
+   "DatabaseSecurityGroup" : {
+    "Type" : "AWS::RDS::DBSecurityGroup",
+    "Properties" : {
+        "GroupDescription" : "Ingress for CIDRIP",
+        "DBSecurityGroupIngress" : {
+            "CIDRIP" : "0.0.0.0/0"
+        }
+    }
+   },
+
 
     "DatabaseSubnetGroup": {
       "Type": "AWS::RDS::DBSubnetGroup",
@@ -843,27 +860,6 @@
       }
     },
 
-    "Database": {
-      "Type": "AWS::RDS::DBInstance",
-      "DeletionPolicy": "Snapshot",
-      "Properties": {
-        "MasterUserPassword": { "Ref": "ParDBPassword" },
-        "EngineVersion": "5.6.27",
-        "DBInstanceClass": { "Ref": "ParDBInstanceClass" },
-        "DBSecurityGroups": [ { "Ref": "DatabaseSecurityGroup" } ],
-        "MasterUsername": { "Ref": "ParDBUser" },
-        "DBName": { "Ref": "ParDBName" },
-        "DBSubnetGroupName": { "Ref": "DatabaseSubnetGroup" },
-        "MultiAZ": "true",
-        "Engine": "mysql",
-        "AllocatedStorage": { "Ref": "ParDBAllocatedStorage" },
-        "Tags" : [
-          { "Key": "Name", "Value": "myBBDatabase"},
-          { "Key": "Project", "Value":  { "Ref" : "ParProject" } },
-          { "Key": "Creator", "Value":  { "Ref" : "ParCreator" } }
-        ]
-      }
-    },
 
     "AutoScalingLaunchConfiguration": {
       "Type": "AWS::AutoScaling::LaunchConfiguration",
