@@ -28,7 +28,7 @@
 ###################################################################################################
 
 # Create a keypair 
-aws ec2 create-key-pair --key-name mybb-ssh-key --query 'KeyMaterial' --output text > ./mybb-ssh-key.pem
+#aws ec2 create-key-pair --key-name mybb-ssh-key --query 'KeyMaterial' --output text > ./mybb-ssh-key.pem
 
 # Set ssh key permissions
 chmod 400 ./mybb-ssh-key.pem
