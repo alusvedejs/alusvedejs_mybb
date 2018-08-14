@@ -757,6 +757,15 @@
       }
     },
 
+    "StaticS3Bucket": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "VersioningConfiguration": {
+          "Status": "Enabled"
+        }
+      }
+    },
+
     "ElasticacheSubnetGroup" : {
       "Type" : "AWS::ElastiCache::SubnetGroup",
       "Properties" : {
@@ -1235,6 +1244,10 @@
     "DatabaseProperties": {
       "Value": { "Fn::Join": [ ",", [ { "Ref": "Database" }, { "Fn::GetAtt": [ "Database", "Endpoint.Address" ] }, { "Fn::GetAtt": [ "Database", "Endpoint.Port" ] } ] ] },
       "Description": "Properties associated with the RDS database instance"
+    } ,
+    "BastionIP": {
+      "Value": { "Fn::Join": [ ",", [ { "Ref": "BastionElasticIP" }, { "Fn::GetAtt": [ "BastionEIP", "AllocationId" ] } ] ] },
+      "Description": "IP address for Bastion instance."
     } 
   }
 
