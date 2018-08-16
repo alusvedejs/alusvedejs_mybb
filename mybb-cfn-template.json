@@ -69,9 +69,9 @@
       "Description" : "The database instance type",
       "ConstraintDescription" : "must select a valid database instance type.",
       "AllowedValues" : [
-        "db.m4.large", "db.m4.xlarge", 
-        "db.m3.medium", "db.m3.large", "db.m3.xlarge", 
-        "db.r3.large", "db.r3.xlarge",   
+        "db.m4.large",  
+        "db.m3.medium", "db.m3.large", 
+        "db.r3.large",    
         "db.t2.micro", "db.t2.small", "db.t2.medium", "db.t2.large"
       ],
       "Default": "db.t2.small"
@@ -932,6 +932,16 @@
          "MasterUserPassword": { "Ref" : "ParDBPassword" }
       }
    },
+
+   "ReplicaDB" : {
+    "Type" : "AWS::RDS::DBInstance",
+    "Properties" : {
+      "SourceDBInstanceIdentifier" : { "Ref" : "Database" },
+      "DBInstanceClass" : { "Ref" : "ParDBInstanceClass" },
+      "Tags" : [{ "Key"  : "Name", "Value" : "Read Replica Database" }]
+    }
+  },
+
    
    "DatabaseSecurityGroup" : {
     "Type" : "AWS::RDS::DBSecurityGroup",
