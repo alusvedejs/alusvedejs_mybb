@@ -49,11 +49,8 @@
       "Description": "WebServer EC2 instance type",
       "ConstraintDescription": "must be a valid EC2 instance type.",
       "AllowedValues": [
-        "t2.nano", "t2.micro", "t2.small", "t2.medium", "t2.large", "m4.large", "m4.xlarge", "m4.2xlarge", "m4.4xlarge", "m4.10xlarge", "m3.medium", "m3.large", "m3.xlarge", "m3.2xlarge",
-        "c4.large", "c4.xlarge", "c4.2xlarge", "c4.4xlarge", "c4.8xlarge", "c3.large", "c3.xlarge", "c3.2xlarge", "c3.4xlarge", "c3.8xlarge",
-        "r3.large", "r3.xlarge", "r3.2xlarge", "r3.4xlarge", "r3.8xlarge",
-        "i2.xlarge", "i2.2xlarge", "i2.4xlarge", "i2.8xlarge", "d2.xlarge", "d2.2xlarge", "d2.4xlarge", "d2.8xlarge",
-        "g2.2xlarge", "g2.8xlarge"
+        "t2.micro", "t2.small", "t2.medium", "m3.medium", "m3.large", 
+        "c4.large", "c3.large", "r3.large", "m4.large", "t2.large"
       ],
       "Default": "t2.micro"
     },
@@ -72,9 +69,9 @@
       "Description" : "The database instance type",
       "ConstraintDescription" : "must select a valid database instance type.",
       "AllowedValues" : [
-        "db.m4.large", "db.m4.xlarge", "db.m4.2xlarge", "db.m4.4xlarge", "db.m4.10xlarge",
-        "db.m3.medium", "db.m3.large", "db.m3.xlarge", "db.m3.2xlarge",
-        "db.r3.large", "db.r3.xlarge", "db.r3.2xlarge", "db.r3.4xlarge", "db.r3.8xlarge",
+        "db.m4.large", "db.m4.xlarge", 
+        "db.m3.medium", "db.m3.large", "db.m3.xlarge", 
+        "db.r3.large", "db.r3.xlarge",   
         "db.t2.micro", "db.t2.small", "db.t2.medium", "db.t2.large"
       ],
       "Default": "db.t2.small"
@@ -94,11 +91,8 @@
       "Description": "Elasticache node type",
       "ConstraintDescription": "must be a valid Elasticache node type.",
       "AllowedValues": [
-        "cache.t2.micro", "cache.t2.small", "cache.t2.medium", "cache.m3.medium", "cache.m3.large", "cache.m3.xlarge", "cache.m3.2xlarge",
-        "cache.t1.micro", "cache.m1.small", "cache.m1.medium", "cache.m1.large", "cache.m1.xlarge",
-        "cache.c1.xlarge",
-        "cache.r3.large", "cache.r3.xlarge", "cache.r3.2xlarge", "cache.r3.4xlarge", "cache.r3.8xlarge",
-        "cache.m2.xlarge", "cache.m2.2xlarge", "cache.m2.4xlarge"
+        "cache.t2.micro", "cache.t2.small", "cache.t2.medium", "cache.m3.medium", "cache.m3.large",
+        "cache.t1.micro", "cache.m1.small", "cache.m1.medium", "cache.m1.large", "cache.r3.large"
       ],
       "Default": "cache.t2.micro"
     },
@@ -134,8 +128,22 @@
       "AllowedPattern" : "[a-zA-Z0-9]*",
       "NoEcho" : "true",
       "Default" :  "1mybbdbpass"
-    }
+    },
 
+    "VolumeName" : {
+      "Description" : "The name to be used for the EFS volume",
+      "Type": "String",
+      "MinLength": "1",
+      "Default": "myEFSvolume"
+    },
+
+    "MountPoint" : {
+      "Description" : "The Linux mount point for the EFS volume",
+      "Type": "String",
+      "MinLength": "1",
+      "Default": "myEFSvolume"
+    }
+  
   },
 
   "Mappings": {
@@ -201,13 +209,7 @@
       "us-west-2"        : {"PV64" : "ami-792bc219", "HVM64" : "ami-c229c0a2", "HVMG2" : "ami-0f28c06f"},
       "us-west-1"        : {"PV64" : "ami-0e087a6e", "HVM64" : "ami-1b0f7d7b", "HVMG2" : "ami-ab9defcb"},
       "eu-west-1"        : {"PV64" : "ami-a5368cd6", "HVM64" : "ami-31328842", "HVMG2" : "ami-d1d652a2"},
-      "eu-central-1"     : {"PV64" : "ami-2bde3944", "HVM64" : "ami-e2df388d", "HVMG2" : "ami-5240a73d"},
-      "ap-northeast-1"   : {"PV64" : "ami-37020959", "HVM64" : "ami-f80e0596", "HVMG2" : "ami-34a9a35a"},
-      "ap-northeast-2"   : {"PV64" : "NOT_SUPPORTED", "HVM64" : "ami-6598510b", "HVMG2" : "NOT_SUPPORTED"},
-      "ap-southeast-1"   : {"PV64" : "ami-ff0cc79c", "HVM64" : "ami-e90dc68a", "HVMG2" : "ami-6f6ca70c"},
-      "ap-southeast-2"   : {"PV64" : "ami-f5210196", "HVM64" : "ami-f2210191", "HVMG2" : "ami-88c1e1eb"},
-      "sa-east-1"        : {"PV64" : "ami-661e930a", "HVM64" : "ami-1e159872", "HVMG2" : "NOT_SUPPORTED"},
-      "cn-north-1"       : {"PV64" : "ami-08ef2465", "HVM64" : "ami-49e22924", "HVMG2" : "NOT_SUPPORTED"}
+      "eu-central-1"     : {"PV64" : "ami-2bde3944", "HVM64" : "ami-e2df388d", "HVMG2" : "ami-5240a73d"}
     }
 
   },
@@ -766,6 +768,96 @@
       }
     },
 
+    "CloudWatchPutMetricsRole" : {
+      "Type"  : "AWS::IAM::Role",
+      "Properties" : {
+          "AssumeRolePolicyDocument" : {
+              "Statement" : [ {
+                  "Effect" : "Allow",
+                  "Principal" : {
+                      "Service" : [ "ec2.amazonaws.com" ]
+                  },
+                  "Action" : [ "sts:AssumeRole" ]
+              } ]
+          },
+          "Path" : "/"
+      }
+    },
+
+    "CloudWatchPutMetricsRolePolicy" : {
+        "Type" : "AWS::IAM::Policy",
+        "Properties" : {
+            "PolicyName" : "CloudWatch_PutMetricData",
+            "PolicyDocument" : {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Sid": "CloudWatchPutMetricData",
+                  "Effect": "Allow",
+                  "Action": ["cloudwatch:PutMetricData"],
+                  "Resource": ["*"]
+                }
+              ]
+            },
+            "Roles" : [ { "Ref" : "CloudWatchPutMetricsRole" } ]
+        }
+    },
+
+    "CloudWatchPutMetricsInstanceProfile" : {
+      "Type" : "AWS::IAM::InstanceProfile",
+      "Properties" : {
+        "Path" : "/",
+        "Roles" : [ { "Ref" : "CloudWatchPutMetricsRole" } ]
+      }
+    },
+
+    "MountTargetSecurityGroup": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "VpcId": { "Ref": "VPC" },
+        "GroupDescription": "Security group for mount target",
+        "SecurityGroupIngress": [
+          {
+            "IpProtocol": "tcp",
+            "FromPort": "2049",
+            "ToPort": "2049",
+            "CidrIp": "0.0.0.0/0"
+          }
+        ]
+      }
+    },
+
+    "FileSystem": {
+      "Type": "AWS::EFS::FileSystem",
+      "Properties": {
+        "PerformanceMode": "generalPurpose",
+        "FileSystemTags": [
+          {
+            "Key": "Name",
+            "Value": { "Ref" : "VolumeName" }
+          }
+        ]
+      }
+    },
+
+    "MountTarget1": {
+      "Type": "AWS::EFS::MountTarget",
+      "Properties": {
+        "FileSystemId": { "Ref": "FileSystem" },
+        "SubnetId": { "Ref": "PrivateSubnet1" },
+        "SecurityGroups": [ { "Ref": "MountTargetSecurityGroup" } ]        
+      }
+    },   
+
+    "MountTarget2": {
+      "Type": "AWS::EFS::MountTarget",
+      "Properties": {
+        "FileSystemId": { "Ref": "FileSystem" },
+        "SubnetId": { "Ref": "PrivateSubnet2" },
+        "SecurityGroups": [ { "Ref": "MountTargetSecurityGroup" } ]        
+      }
+    },   
+
     "ElasticacheSubnetGroup" : {
       "Type" : "AWS::ElastiCache::SubnetGroup",
       "Properties" : {
@@ -826,8 +918,6 @@
       }
     },
 
-
-
     "Database" : {
       "Type": "AWS::RDS::DBInstance",
       "DeletionPolicy": "Snapshot",
@@ -843,8 +933,6 @@
       }
    },
    
-
-
    "DatabaseSecurityGroup" : {
     "Type" : "AWS::RDS::DBSecurityGroup",
     "Properties" : {
@@ -854,7 +942,6 @@
         }
     }
    },
-
 
     "DatabaseSubnetGroup": {
       "Type": "AWS::RDS::DBSubnetGroup",
@@ -869,13 +956,108 @@
       }
     },
 
-
     "AutoScalingLaunchConfiguration": {
       "Type": "AWS::AutoScaling::LaunchConfiguration",
       "Metadata" : {
         "AWS::CloudFormation::Init" : {
           "configSets" : {
-            "mybb_install" : ["install_cfn", "install_mybb" ]
+            "mybb_install" : ["setup", "mount", "install_cfn", "install_mybb" ]
+          },
+          "setup" : {
+            "packages" : {
+              "yum" : {
+                "nfs-utils" : []
+              }
+            },
+            "files" : {
+              "/home/ec2-user/post_nfsstat" : {
+                "content" : { "Fn::Join" : [ "", [
+                      "#!/bin/bash\n",
+                      "\n",
+                      "INPUT=\"$(cat)\"\n",
+                      "CW_JSON_OPEN='{ \"Namespace\": \"EFS\", \"MetricData\": [ '\n",
+                      "CW_JSON_CLOSE=' ] }'\n",
+                      "CW_JSON_METRIC=''\n",
+                      "METRIC_COUNTER=0\n",
+                      "\n",
+                      "for COL in 1 2 3 4 5 6; do\n",
+                      "\n",
+                      " COUNTER=0\n",
+                      " METRIC_FIELD=$COL\n",
+                      " DATA_FIELD=$(($COL+($COL-1)))\n",
+                      "\n",
+                      " while read line; do\n",
+                      "   if [[ COUNTER -gt 0 ]]; then\n",
+                      "\n",
+                      "     LINE=`echo $line | tr -s ' ' `\n",
+                      "     AWS_COMMAND=\"aws cloudwatch put-metric-data --region ", { "Ref": "AWS::Region" }, "\"\n",
+                      "     MOD=$(( $COUNTER % 2))\n",
+                      "\n",
+                      "     if [ $MOD -eq 1 ]; then\n",
+                      "       METRIC_NAME=`echo $LINE | cut -d ' ' -f $METRIC_FIELD`\n",
+                      "     else\n",
+                      "       METRIC_VALUE=`echo $LINE | cut -d ' ' -f $DATA_FIELD`\n",
+                      "     fi\n",
+                      "\n",
+                      "     if [[ -n \"$METRIC_NAME\" && -n \"$METRIC_VALUE\" ]]; then\n",
+                      "       INSTANCE_ID=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)\n",
+                      "       CW_JSON_METRIC=\"$CW_JSON_METRIC { \\\"MetricName\\\": \\\"$METRIC_NAME\\\", \\\"Dimensions\\\": [{\\\"Name\\\": \\\"InstanceId\\\", \\\"Value\\\": \\\"$INSTANCE_ID\\\"} ], \\\"Value\\\": $METRIC_VALUE },\"\n",
+                      "       unset METRIC_NAME\n",
+                      "       unset METRIC_VALUE\n",
+                      "\n",
+                      "       METRIC_COUNTER=$((METRIC_COUNTER+1))\n",
+                      "       if [ $METRIC_COUNTER -eq 20 ]; then\n",
+                      "         # 20 is max metric collection size, so we have to submit here\n",
+                      "         aws cloudwatch put-metric-data --region ", { "Ref": "AWS::Region" }, " --cli-input-json \"`echo $CW_JSON_OPEN ${CW_JSON_METRIC%?} $CW_JSON_CLOSE`\"\n",
+                      "\n",
+                      "         # reset\n",
+                      "         METRIC_COUNTER=0\n",
+                      "         CW_JSON_METRIC=''\n",
+                      "       fi\n",
+                      "     fi  \n",
+                      "\n",
+                      "\n",
+                      "\n",
+                      "     COUNTER=$((COUNTER+1))\n",
+                      "   fi\n",
+                      "\n",
+                      "   if [[ \"$line\" == \"Client nfs v4:\" ]]; then\n",
+                      "     # the next line is the good stuff \n",
+                      "     COUNTER=$((COUNTER+1))\n",
+                      "   fi\n",
+                      " done <<< \"$INPUT\"\n",
+                      "done\n",
+                      "\n",
+                      "# submit whatever is left\n",
+                      "aws cloudwatch put-metric-data --region ", { "Ref": "AWS::Region" }, " --cli-input-json \"`echo $CW_JSON_OPEN ${CW_JSON_METRIC%?} $CW_JSON_CLOSE`\""
+                    ] ] },
+                "mode": "000755",
+                "owner": "ec2-user",
+                "group": "ec2-user"
+              },
+              "/home/ec2-user/crontab" : {
+                "content" : { "Fn::Join" : [ "", [
+                  "* * * * * /usr/sbin/nfsstat | /home/ec2-user/post_nfsstat\n"
+                ] ] },
+                "owner": "ec2-user",
+                "group": "ec2-user"
+              }
+            },
+            "commands" : {
+              "01_createdir" : {
+                "command" : {"Fn::Join" : [ "", [ "mkdir /", { "Ref" : "MountPoint" }]]}
+              }
+            }
+          },
+          "mount" : {
+            "commands" : {
+              "01_mount" : {
+                "command" : { "Fn::Sub": "sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2 ${FileSystem}.efs.${AWS::Region}.amazonaws.com:/ /${MountPoint}"}
+              },
+              "02_permissions" : {
+                "command" : {"Fn::Join" : [ "", [ "chown ec2-user:ec2-user /", { "Ref" : "MountPoint" }]]}
+              }
+            }
           },
           "install_cfn" : {
             "files": {
@@ -1028,6 +1210,8 @@
             "         --region ", { "Ref" : "AWS::Region" },
             " || error_exit 'Failed to run cfn-init'\n",
 
+            "crontab /home/ec2-user/crontab\n",
+
             "# Start up the cfn-hup daemon to listen for changes to the EC2 instance metadata\n",
             "/opt/aws/bin/cfn-hup || error_exit 'Failed to start cfn-hup'\n",
 
@@ -1044,7 +1228,6 @@
         ]]}}
       }
     },
-
 
     "AutoScalingGroup": {
       "Type": "AWS::AutoScaling::AutoScalingGroup",
